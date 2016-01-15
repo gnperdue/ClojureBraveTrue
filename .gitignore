@@ -1,0 +1,8 @@
+
+# ignore "official" repos kept around for convenience
+cftbat-code/
+emacs-for-clojure/
+braveTrueCha05/pegthing
+
+# script for using the author's custom emacs setup
+installnix.sh*
