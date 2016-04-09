@@ -26,7 +26,7 @@
 ;; (a' {'a 1 'b 2}), (:a {'a 1 'b 2}), (:a {:a 1 :b 2})
 
 ;; What do the following return? Are they all legal?
-;; (get {'a 1 'b 2} a'), (get {:a 1 :b 2} :a), (get {"a" 1 "b" 2} "a")
+;; (get {'a 1 'b 2} 'a), (get {:a 1 :b 2} :a), (get {"a" 1 "b" 2} "a")
 
 ;; What do we use `get-in` for? Write a function that uses it.
 
