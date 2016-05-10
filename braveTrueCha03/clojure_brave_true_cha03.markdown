@@ -98,6 +98,12 @@ for nullity with the `nil?` function:
     false
     user> (nil? nil)
     true
+    user> (nil? false)
+    false
+    user> (true? nil)
+    false
+    user> (false? nil)
+    false
 
 Both `nil` and `false` are used to represent logical falsity, while all other
 values are logically true.
@@ -116,6 +122,8 @@ Clojure's equality operator is `=`:
     false
     user> (= 1.0 1.0)
     true
+    user> (= 1 1.0)
+    false
 
 We don't need to worry about type when checking for equality in Clojure.
 
@@ -124,6 +132,12 @@ Clojure also has `or` and `and`:
     user> (or false nil :large_I_mean_venti :why_cant_I_just_say_large)
     :large_I_mean_venti
     user> (or false true :large_I_mean_venti :why_cant_I_just_say_large)
+    true
+    user> (or true false :large :small)
+    true
+    user> (or nil false :small true)
+    :small
+    user> (or nil false true :small)
     true
     user> (or (= 0 1) (= "yes" "no"))
     false
@@ -271,6 +285,10 @@ structure.
     1
     user> (get {:a 1 :b 2 :c 3} :a)    ;; equivalent
     1
+    user> (:name {:name "tigre" :occupation "bad-dude"})
+    "tigre"
+    user> ({:name "tigre" :occupation "bad-dude"} :name)
+    "tigre"
 
 We may also provide default values:
 
@@ -286,6 +304,8 @@ A vector is a 0-indexed collection.
     user> (get [3 2 1] 0)
     3
     user> (get [3 2 1] -1)
+    nil
+    user> (get [3 2 1] 3)
     nil
 
 We can also use `get` to retrieve by index:
@@ -350,6 +370,17 @@ If we try to add an element to a set that already exists, nothing will happen:
     user> (conj #{:a :b} :c)
     #{:c :b :a}
 
+Interestingly:
+
+    user> #{:a :b :c :d :a}
+    IllegalArgumentException Duplicate key: :a  clojure.lang.PersistentHashSet.createWithCheck (PersistentHashSet.java:68)
+    user> (hash-set :a :b :c :d :a)
+    #{:c :b :d :a}
+    user> (conj #{:a :b :c} :a)
+    #{:c :b :a}
+    user> (conj #{:a :b :c} :d)
+    #{:c :b :d :a}
+
 We may also create sets from vectors or lists:
 
     user> (set [1 2 2 3 3 3 4 4 4 4])
@@ -374,6 +405,8 @@ We can use a keyword also:
     nil
     user> (3 #{:a :b})
     ClassCastException java.lang.Long cannot be cast to clojure.lang.IFn  user/eval7942 (form-init7620152324657781441.clj:1)
+    user> (#{:a :b} :a)
+    :a
 
 We can also use `get`:
 
@@ -418,6 +451,24 @@ All Clojure functions have the same Lispy syntax.
     user> ((or - +) 1 2 3)
     -4
 
+Remember, `and` returns the last truthy value if everything is truthy:
+
+    user> ((and + -) 1 2 3 4)
+    -8
+    user> (- 1 2 3 4)
+    -8
+    user> ((and + nil) 1 2)
+    NullPointerException   user/eval9788 (form-init4069719896812134405.clj:1)
+    user> ((or + nil) 1 2)
+    3
+
+If anything is falsey, `and` returns the first falsey value:
+
+    user> (and false true)
+    false
+    user> (and + true)
+    true
+
 Some more functions that return 6:
 
     user> ((and (= 1 1) +) 1 2 3)
@@ -460,7 +511,22 @@ as arguments to functions. In general, special forms implement core Clojure
 functionality that can't be implemented with functions. Similarly, macros can't
 be passed as arguments to functions.
 
+    user> (if true
+            (* 1 0)
+            (/ 1 0))
+    0
+
 ### Defining Functions
+
+There are five main parts:
+
+1. `defn` (or, later `def` and `fn`, etc.)
+2. Function name
+3. A docstring
+4. Parameters in brackets
+5. Function body
+
+e.g.,
 
     (defn too-enthusiastic
       "Return a cheer that might be a bit too enthusiastic."
@@ -486,6 +552,20 @@ in the REPL with `(doc fn-name)`:
 Clojure functions may be defined with zero or more parameters. Functions also
 support arity overloading. This means we can define a function so that a different
 function body runs depending on the arity.
+
+Note that each arity definition is enclosed in `()` and has an argument list in
+`[]`:
+
+    user> (defn blarg
+            ([arg1 arg2]
+             (str arg1 " and " arg2))
+            ([arg]
+             (str arg)))
+    #'user/blarg
+    user> (blarg :a)
+    ":a"
+    user> (blarg :a :b)
+    ":a and :b"
 
     user> (multi-arity)
     "No args"
@@ -518,12 +598,16 @@ must come last.
     user> (favorite-things "Maria" "whiskers" "sleigh-bells")
     "Hi, Maria, here are my favorite things: whiskers, sleigh-bells"
 
-#### Destructing
+#### Destructuring
 
 Destructuring lets us concisely bind names within a collection.
 
     user> (my-first ["oven" "bike" "war-axe"])
     "oven"
+    user> (my-first :A)
+    UnsupportedOperationException nth not supported on this type: Keyword  clojure.lang.RT.nthFrom (RT.java:933)
+    user> (my-first '(:a :b :c))
+    :a
 
 The code looks like this:
 
@@ -591,6 +675,39 @@ We can retain access to the original map argument using the `:as` keyword.
       (println (str "Treasure lat: " lat))
       (println (str "Treasure lng: " lng)))
 
+Interesting to see this in action...
+
+    user> (defn receive-treasure-location
+        [{:keys [lat lng] :as treasure-location}]
+        (println (str "Treasure lat: " lat))
+        (println (str "Treasure lng: " lng)))
+
+    #'user/receive-treasure-location
+    user> (receive-treasure-location {:lat 20 :lng 25})
+    Treasure lat: 20
+    Treasure lng: 25
+    nil
+    user> (receive-treasure-location {:latitude 20 :longitude 25})
+    Treasure lat: 
+    Treasure lng: 
+    nil
+    user> (defn receive-treasure-location
+            [{:keys [latitude longitude] :as treasure-location}]
+            (println (str "Treasure lat: " latitdue))
+            (println (str "Treasure lng: " longitude)))
+    
+    CompilerException java.lang.RuntimeException: Unable to resolve symbol: latitdue in this context, compiling:(*cider-repl localhost*:397:18) 
+    user> (defn receive-treasure-location
+            [{:keys [latitude longitude] :as treasure-location}]
+            (println (str "Treasure lat: " latitude))
+            (println (str "Treasure lng: " longitude)))
+    
+    #'user/receive-treasure-location
+    user> (receive-treasure-location {:latitude 20 :longitude 25})
+    Treasure lat: 20
+    Treasure lng: 25
+    nil
+
 #### Function Body
 
 The body can contain forms of any kind and Clojure will automatically return the
@@ -624,6 +741,9 @@ so on. We may even associate anonymous functions with a name:
     #'user/my-speical-multiplier
     user> (my-speical-multiplier 12)
     36
+
+Indeed, if we `(doc defn)`, we see it is a macro that wraps this functionality up
+for us.
 
 There is another, more compact notation: `#( %)`
 
@@ -672,6 +792,11 @@ Okay, hit hobbits...
 ### `let`
 
 `(let ...)` binds names to values. It is short for "let it be...".
+
+    user> (let [:vowels "aeiou"] :vowels)
+    Exception Unsupported binding key: :vowels  clojure.core/destructure (core.clj:4298)
+    user> (let [vowels "aeiou"] vowels)
+    "aeiou"
 
     user> (let [x 3]
             x)
@@ -767,14 +892,45 @@ The syntax is roughly `#"regular-expression"`.
     user> (re-find #"^left-" "left-wongle")
     "left-"
 
+    user> (clojure.string/replace "wonglebart" #"^wongle" "woongle")
+    "woonglebart"
+    user> (clojure.string/replace "wonglebart" #"^wyngle" "woongle")
+    "wonglebart"
+
+Note that if the match-expression in `clojure.string/replace` fails, then the
+function just returns the original string we give it.
+
 ### Symmetrizer
 
+`into` is useful for building up collections:
+
+    user> (into '() '(1 2 3))
+    (3 2 1)
+    user> (into #{} '(1 2 1 3))
+    #{1 3 2}
+    user> (into #{1 2 3} '(1 2 1 3 4 5 5 6))
+    #{1 4 6 3 2 5}
+    user> (into #{1 2 3} (set '(1 2 1 3 4 5 5 6)))
+    #{1 4 6 3 2 5}
+
 ### Better Symmetrizer with `reduce`
+
+The pattern of "process each element in a sequence and build up a result" is so
+common it has its own built-in function - `reduce`:
 
     user> (reduce + [1 2 3 4])
     10
     user> (reduce + 15 [1 2 3 4])
     25
+
+    user> (reduce * [1 2 3 4 5])
+    120
+    user> (reduce - [1 2 3 4 5])
+    -13
+    user> (reduce + [1 2 3 4 5])
+    15
+    user> (reduce / [1 2 3 4 5])
+    1/120
 
 But,
 
@@ -783,6 +939,9 @@ But,
 
 We can give `reduce` an optional initial argument (otherwise the first item in the
 sequence is the initial value).
+
+    user> (reduce / 10 [1 2 3 4 5])
+    1/12
 
 ### Hobbit Violence
 

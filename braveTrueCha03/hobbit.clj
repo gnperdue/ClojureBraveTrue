@@ -1,3 +1,4 @@
+;; vector of maps
 (def asym-hobbit-body-parts [
                              {:name "head" :size 3}
                              {:name "left-eye" :size 1}
@@ -21,6 +22,9 @@
                              ])
 
 (defn matching-part
+  "accept a map with a `:name`d left-part and a `:size` and return the right-
+  side equivalent - note that this will just return the map passed in if the
+  `:name`d part doesn't start with `left-`."
   [part]
   {:name (clojure.string/replace (:name part) #"^left-" "right-")
    :size (:size part)})
