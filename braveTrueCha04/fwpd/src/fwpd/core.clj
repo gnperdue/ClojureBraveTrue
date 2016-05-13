@@ -7,6 +7,7 @@
   [str]
   (Integer. str))
 
+;; use a map to hold some functions for parsing the csv string data
 (def conversions {:name identity
                   :glitter-index str->int})
 
@@ -21,7 +22,8 @@
        (clojure.string/split string #"\n")))
 
 (defn mapify
-  "Return a seq of maps like {:name \"Edward Cullen\" :glitter-index 10}"
+  "Return a seq of maps like {:name \"Edward Cullen\" :glitter-index 10}
+  recall `vamp-keys` are a local def"
   [rows]
   (map (fn [unmapped-row]
          (reduce (fn [row-map [vamp-key value]]
@@ -29,6 +31,15 @@
                  {}
                  (map vector vamp-keys unmapped-row)))
        rows))
+
+;; fwpd.core> (map vector [:a :b] [:c :d])
+;; ([:a :c] [:b :d])
+;; fwpd.core> (map vector '(:a) '(:b))
+;; ([:a :b])
+;; fwpd.core> (map vector :a :b)
+;; IllegalArgumentException
+;; fwpd.core> (map vector [:a :b :c :d] [:e :f])
+;; ([:a :e] [:b :f])
 
 (defn glitter-filter
   [minimum-glitter records]

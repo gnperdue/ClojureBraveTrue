@@ -5,6 +5,11 @@
     '()
     (cons (func (first sq)) (my-map func (rest sq)))))
 
+;; Suppose you get 25% cash back on a purchase of $75, 15% cash back on a 
+;; purchase of $50, 11% cash back on a purchase of $45, 10% cash back on a 
+;; purchase of $111, 8% cash back on a purchase of $213, and 5% cash back on
+;; a purchase of $2,109.99. How much total cash back did you receive?
+
 ;; Pass a set of functions a single collection with map. For example, make
 ;; three functions, `my-min`, `my-mean`, and `my-max` and put them into a
 ;; group with `def` (try a `vector` and then a `list`) and another function
@@ -56,6 +61,24 @@
 
 ;; Implement `some` using `reduce`.
 
+;; Implement `take`, `drop`, `take-while`, and `drop-while`.
+
+(defn my-take
+  [n coll]
+  (loop [new-coll '() old-coll coll cntr 0]
+    (if (or (>= cntr n) (nil? (first old-coll)))
+      (reverse new-coll)
+      (recur (cons (first old-coll) new-coll) (rest old-coll) (inc cntr)))))
+
+(defn my-take2
+  [n coll]
+  (loop [new-coll [] old-coll coll]
+    (if (or (>= (count new-coll) n) (nil? (first old-coll)))
+      (seq new-coll)
+      (recur (conj new-coll (first old-coll)) (rest old-coll)))))
+
+;; sort [6 3 2 4 5 1] both ascedning and descending. hint: `(doc compare)`
+
 ;; Use `some` in a function. Try using `some` to see if a list matches some
 ;; conditions, and then try to `map` that function over a list of lists to see
 ;; which of them match the condition, etc.
@@ -75,7 +98,7 @@
     (map get-some test-list-vect)))
 
 ;; Turn `(concat (take 8 (repeat "na")) '("Batman!"))` into one string. Hint:
-;; use `apply`.
+;; use `apply` or `reduce`.
 (def raw-na-bat
   (concat (take 8 (repeat "na ")) '("Batman!")))
 
@@ -91,3 +114,9 @@
 ;; Use `conj` in a function.
 
 ;; Use `complement` in a function.
+
+;; Make a lazy seq of Fibonnaci numbers that is 1,000,000 elements long. Get the
+;; fourth element.
+
+;; Make a lazy seq of Fibonnaci numbers that is inifinitely long. Get the fourth 
+;; element.

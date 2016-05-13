@@ -5,9 +5,12 @@
 (def critter-consumption [0.0 0.2 0.3 1.1])
 
 (defn unify-diet-data
+  "expect two args, each a number"
   [human critter]
   {:human human
    :critter critter})
+
+;; (map unify-diet-data human-consumption critter-consumption)
 
 (def sum #(reduce + %))
 
@@ -79,9 +82,7 @@
    33 {:makes-blood-puns? false, :has-pulse? true :name "McMansion27"}
    34 {:makes-blood-puns? false, :has-pulse? true :name "McMansion28"}
    35 {:makes-blood-puns? false, :has-pulse? true :name "McMansion29"}
-   36 {:makes-blood-puns? false, :has-pulse? true :name "McMansion30"}
-   }
-  )
+   36 {:makes-blood-puns? false, :has-pulse? true :name "McMansion30"}})
 
 (defn vampire-related-details
   [social-security-number]

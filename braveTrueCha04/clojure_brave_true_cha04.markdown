@@ -87,7 +87,7 @@ what is going on with the `map`...
     user> (first (first (seq {:name "Bill Compton" :occupation "Dopey money guy"})))
     :name
 
-We can conver the seq back into a `map` with `into`:
+We can convert the seq back into a `map` with `into`:
 
     user> (into {} (seq {:name "Bill Compton" :occupation "Dopey money guy"}))
     {:name "Bill Compton", :occupation "Dopey money guy"}
@@ -121,6 +121,9 @@ Surprising _and_ delightful...
 
     user> (map inc [1 2 3])
     (2 3 4)
+
+We may give `map` multiple collections:
+
     user> (map str ["a" "b" "c"] ["A" "B" "C"])
     ("aA" "bB" "cC")
     user> (map str ["a" "b" "c"] ["A" "B" "C"] ["1" "2" "3"])
@@ -142,8 +145,15 @@ We can even pass groups of functions a single collection!
 
 We can even map keys to get the associated values from `map`s:
 
+    user> (map :a [{:a 1} {:b 2} {:c 3}])
+    (1 nil nil)
     user> (map :real identities)
     ("Bruce Wayne" "Peter Parker" "Your Mom" "Your Dad")
+
+    user> (map (fn [[k v]] (println (str k " - " v))) {:a 1 :b 2})
+    :a - 1
+    :b - 2
+    (nil nil)
 
 ### `reduce`
 
@@ -165,10 +175,6 @@ How does `assoc` work?
 In our example, `reduce` treats the argument like a sequence of vectors, e.g.,
 `'([:max 30] [:min 10])`. Then it starts with an empty map and builds it up using
 an anonymous function.
-
-Here, the magic of `reduce` is it lets us treat the map like a sequence of two-
-element vectors, so getting the key and value is as simple as just destructuring
-the vector.
 
 We can also filter...
 
@@ -245,6 +251,11 @@ It defaults to sort of reasonable things:
     user> (sort [[3 1 2 0 -1] [5 6 4 7]])
     ([5 6 4 7] [3 1 2 0 -1])
 
+    user> (sort '([3 1 2 0] [2 5 7 8]))
+    ([2 5 7 8] [3 1 2 0])
+    user> (sort '([3 1 2 0] [7 5 7 8]))
+    ([3 1 2 0] [7 5 7 8])
+
 If we need to do something a bit fancier, we have `sort-by`, which accepts a
 _key function_.
 
@@ -252,6 +263,13 @@ _key function_.
     ("c" "bb" "aaa")
     user> (sort ["aaa" "c" "bb"])
     ("aaa" "bb" "c")
+
+We use `compare` with this form of sort to sort descending:
+
+    user> (sort [3 6 4 2 1])
+    (1 2 3 4 6)
+    user> (sort #(compare %2 %1) [3 6 4 2 1])
+    (6 4 3 2 1)
 
 ### `concat`
 
@@ -333,6 +351,11 @@ The right way is to use `reduce`...
     user> (reduce str (concat (take 8 (repeat "na ")) '("Batman!")))
     "na na na na na na na na Batman!"
 
+`apply` works also:
+
+    user> (apply str (concat (take 8 (repeat "na ")) '("Batman!")))
+    "na na na na na na na na Batman!"
+
 We can also use `repeatedly`, which will call a provided function to generate
 an element of the sequence:
 
@@ -409,8 +432,8 @@ The first argument of `into` doesn't have to be empty:
 
 Of course, both arguments can be the same type:
 
-user> (into {:a 1} {:b 2 :c 3})
-{:a 1, :b 2, :c 3}
+    user> (into {:a 1} {:b 2 :c 3})
+    {:a 1, :b 2, :c 3}
 
 `into` is good at taking two collections and adding all the elements from the
 second collection into the first.
@@ -421,16 +444,19 @@ second collection into the first.
 
     user> (conj [0] [1])
     [0 [1]]
+
+Compare:
+
+    user> (into [0] [1])
+    [0 1]
+
+So, with `conj`:
+
     user> (conj [0] 1)
     [0 1]
     user> (flatten (conj [0] [1]))
     (0 1)
     user> (into [] (flatten (conj [0] [1])))
-    [0 1]
-
-Compare with `into`:
-
-    user> (into [0] [1])
     [0 1]
 
 `conj` can take multiple elements:
@@ -529,7 +555,7 @@ We want to parse a CSV "database" and analyze it for potential vampires.
     Jacob Black,3
     Carlisle Cullen,6
 
-`M-x cider-restard` crashed for me... possibly too far out on the bleeding edge.
+`M-x cider-restart` crashed for me... possibly too far out on the bleeding edge.
 
 Go to the `fwpd` directory and open the log markdown file and `src/fwpd/core.clj`
 file and start a repl. Get a new prompt...
