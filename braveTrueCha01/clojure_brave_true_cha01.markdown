@@ -92,6 +92,13 @@ Then,
     clojure-noob$ lein run
     Mellow, whirled!
 
+Also, in a repl launched via `cider jack-in` in the app top-level:
+
+    -- ctrl-c ctrl-k to compile, then in repl
+    clojure-test-app.core> (-main)
+    Mellow, Whirled...
+    nil
+
 ### Building the Clojure Project
 
     clojure-noob$ lein uberjar

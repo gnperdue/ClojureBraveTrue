@@ -55,7 +55,8 @@ We can get around this with recursion.
 
 Like all recursive colutions, this function checks its arguments against a base
 condition. If we haven't reached the base condition, we keep working through the
-cases.
+cases. Each recursive call creates a new scope where the symbols are bound to
+different values.
 
 Note that you should generally use `recur` when doing recursion for performance
 reasons.
@@ -92,6 +93,11 @@ functions we want to compose needs more than one argument? We wrap it with an
 anonymous function.
 
 `comp` may compose any number of functions.
+
+    user> ((comp * *) 3 3 3)
+    27
+    user> ((comp * * *) 3 3 3 3)
+    81
 
 ### `memoize`
 

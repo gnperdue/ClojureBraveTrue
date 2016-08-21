@@ -36,6 +36,7 @@
   [text]
   (s/replace (s/trim text) #"lol" "LOL"))
 
+;; `comp` means _compose_
 (def character
   {:name "Smooches McCutes"
    :attributes {:intelligence 10
@@ -46,6 +47,7 @@
 (def c-str (comp :strength :attributes))
 (def c-dex (comp :dexterity :attributes))
 
+;; `comp` may take any number of functions
 (defn spell-slots
   [character]
   (int (inc (/ (c-int character) 2))))
@@ -67,7 +69,7 @@
 
 (defn clean-reduced
   [text]
-  (reduce (fn [string string-fn] (string-fn srtring))
+  (reduce (fn [string string-fn] (string-fn string))
           text
           [s/trim #(s/replace % #"lol" "LOL")]))
 
