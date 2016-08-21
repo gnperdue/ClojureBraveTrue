@@ -43,9 +43,9 @@ with `M-x package-install`.
 
 ## Using Emacs with Clojure
 
-Update my `~/.lein/profiles.clj`
+Update (again) my `~/.lein/profiles.clj`
 
-    {:user {:plugins [[cider/cider-nrepl "0.10.0-SNAPSHOT"]]}}
+    {:user {:plugins [[cider/cider-nrepl "0.12.0"]]}}
     {:repl {:dependencies [[org.clojure/tools.nrepl "0.2.12"]]}}
 
 ### Fire Up Your REPL!
