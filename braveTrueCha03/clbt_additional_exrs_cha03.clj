@@ -23,7 +23,7 @@
 ;; Use `def` to define a list of strings (of your favorite programming languages).
 
 ;; What do the following return? Are they all legal?
-;; (a' {'a 1 'b 2}), (:a {'a 1 'b 2}), (:a {:a 1 :b 2})
+;; ('a {'a 1 'b 2}), (:a {'a 1 'b 2}), (:a {:a 1 :b 2})
 
 ;; What do the following return? Are they all legal?
 ;; (get {'a 1 'b 2} 'a), (get {:a 1 :b 2} :a), (get {"a" 1 "b" 2} "a")

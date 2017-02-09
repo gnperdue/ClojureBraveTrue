@@ -3,6 +3,17 @@
   []
   (println "Chugga-choo"))
 
+(def failed-protagonist-names
+  ["Larry Potter", "Doreen the Explorer", "The Incredible Bulk"])
+
+(defn error-message
+  "prepare to overreact"
+  [severity]
+  (str "OH NOES! IT'S A DISASTER! WE'RE "
+       (if (= severity :mild)
+         "MILDLY INCONVENIENCED!"
+         "DOOOOOOOOOOOOMED!")))
+
 (def my-map {:first-name "Charlie"
              :last-name "McFishwich"})
 
@@ -38,6 +49,12 @@
   ([]
    "No args"))
 
+(defn blarg
+  ([arg1 arg2]
+   (str arg1 " and " arg2))
+  ([arg]
+   (str arg)))
+
 (defn x-chop
   "Describe the kind of chop you're inflicting on someone."
   ([name chop-type]
@@ -62,6 +79,10 @@
 (defn my-first
   [[first-thing]]   ;; notice `first-thing` is within a vector
   first-thing)
+
+(defn my-second-thing
+  [[first-thing second-thing & other-things]]
+  second-thing)
 
 (defn chooser
   [[first-choice second-choice & unimportant-choices]]
